@@ -6,12 +6,13 @@ on:
 
 jobs:
   build:
-    name: Docker Zeek on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ "ubuntu-latest" ]
+    env:
+      OS: "ubuntu-latest"
+      LIBRDKAFKA_VERSION: "1.4.4"
+      ZEEK_KAFKA_VERSION: "1.2.0"
+
+    name: Docker Zeek on ${{ env.OS }}, librdkafka ${{ env.LIBRDKAFKA_VERSION }}, zeek-kafka ${{ env.ZEEK_KAFKA_VERSION }}
+    runs-on: ${{ env.OS }}
     permissions:
       contents: write
       packages: write
@@ -123,5 +124,8 @@ jobs:
           push: true
           file: ./src/Dockerfile
           platforms: linux/amd64,linux/arm64
+          build-args: |
+            LIBRDKAFKA_VERSION=${{ env.LIBRDKAFKA_VERSION }}
+            ZEEK_KAFKA_VERSION=${{ env.ZEEK_KAFKA_VERSION }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
